@@ -13,7 +13,7 @@ def choose_mode():
     print("Q - Sair")
 
     while True:
-        escolha = (input('Escolha o modo (1/2) ou Q para sair')).strip().upper()
+        escolha = (input('Escolha o modo (1/2) ou Q para sair: ')).strip().upper()
         
         if escolha == '1':
             return 'PvP'
@@ -41,15 +41,17 @@ def choose_difficulty():
     print('4 - Impossível')
     while True:
         pick = input('Escolha o nível (1 - 4): ').strip()
-        if pick in difficultys:
-            return difficultys[pick]
+        if int(pick) in difficultys:
+            return difficultys[int(pick)]
         else:
             print('Escolha inválida! Tente novamente...')
 
 def player_input_prompt(sinal):
     while True:
-        pos = input(f'Jogador {sinal}, escolha uma posição (1 - 9): ')
+        pos = input(f'Jogador {sinal}, escolha uma posição (1 - 9), ou saia do jogo (Q): ')
         if pos in '123456789':
             return int(pos) - 1
+        elif pos.lower() == 'q':
+            return 'quit'
         else:
             print('Entrada Inválida! Tente novamente...')

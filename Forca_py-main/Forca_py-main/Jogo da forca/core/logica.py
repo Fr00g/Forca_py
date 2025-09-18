@@ -20,13 +20,13 @@ def print_board(board, highlight = None):
     print()
 
 def available_moves(board):
-return [i for i, v in enumerate(board) if v == ' ']
+    return [i for i, v in enumerate(board) if v == ' ']
 
 def is_full(board):
-return all(v != ' ' for v in board)
+    return all(v != ' ' for v in board)
 
 def check_winner(board):
-for a,b,c in WINS:
-if board[a] == board[b] == board[c] and board[a] != ' ':
-return board[a], (a,b,c)
-return None, None        
+    for a,b,c in WINS:
+        if board[a] == board[b] == board[c] and board[a] != ' ':
+            return board[a], (a,b,c)
+    return None, None        
