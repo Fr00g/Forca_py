@@ -1,22 +1,22 @@
-from core.jogo import play_series
-from utils.helpers import choose_mode, choose_difficulty, clear_screen
+from core.jogo import serie_de_rodadas
+from utils.helpers import escolher_modo, escolher_dificuldade, clear_screen
 
 def menu():
     
     while True:
         clear_screen()
-        mode = choose_mode()
+        modo = escolher_modo()
 
-        if mode == 'PvP':
-            print("Modo PvP selecionado!")
-            play_series(mode = 'PvP')
+        if modo == 'PvP':
+            serie_de_rodadas(modo = 'PvP')
     
-        elif mode == 'PvE':
-            print("Modo PvE selecionado!")
-            difficulty = choose_difficulty()
-            print(f"Nível escolhido: {difficulty}")
-            play_series(mode = 'PvE', difficulty = difficulty)
+        elif modo == 'PvE':
+            dificuldade = escolher_dificuldade()
+            if dificuldade is not None:
+                rodadas = serie_de_rodadas(modo = 'PvE', dificuldade =  dificuldade)
+                if rodadas == None:
+                    continue
         
         else:
             print("Saindo.........") 
-            break
+            break 

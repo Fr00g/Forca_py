@@ -1,43 +1,43 @@
 import random
-from .logica import available_moves, check_winner, is_full
+from .logica import jogadas_livres, checar_vencedor, empate
 
 
-def minimax(board, is_maximizing, ai_symbol, player_symbol):
-    winner, _ = check_winner(board)
-    if winner == ai_symbol:
+def minimax(jogo, maximizando, simbolo_ia, simbolo_jogador):
+    winner, _ = checar_vencedor(jogo)
+    if winner == simbolo_ia:
         return 1
-    elif winner == player_symbol:
+    elif winner == simbolo_jogador:
         return -1
-    elif is_full(board):
+    elif empate(jogo):
         return 0
 
-    if is_maximizing:
+    if maximizando:
         best = -999
-        for mv in available_moves(board):
-            board[mv] = ai_symbol
-            score = minimax(board, False, ai_symbol, player_symbol)
-            board[mv] = ' '
+        for mv in jogadas_livres(jogo):
+            jogo[mv] = simbolo_ia  
+            score = minimax(jogo, False, simbolo_ia, simbolo_jogador)
+            jogo[mv] = ' '
             if score > best:
                 best = score
         return best
     else:
         best = 999
-        for mv in available_moves(board):
-            board[mv] = player_symbol
-            score = minimax(board, True, ai_symbol, player_symbol)
-            board[mv] = ' '
+        for mv in jogadas_livres(jogo):
+            jogo[mv] = simbolo_jogador
+            score = minimax(jogo, True, simbolo_ia , simbolo_jogador)
+            jogo[mv] = ' '
             if score < best:
                 best = score
         return best
 
 
-def best_move_minimax(board, ai_symbol, player_symbol):
+def melhor_jogada_minimax(jogo, simbolo_ia , simbolo_jogador):
     best_score = -999
     best_moves = []
-    for mv in available_moves(board):
-        board[mv] = ai_symbol
-        score = minimax(board, False, ai_symbol, player_symbol)
-        board[mv] = ' '
+    for mv in jogadas_livres(jogo):
+        jogo[mv] = simbolo_ia  
+        score = minimax(jogo, False, simbolo_ia, simbolo_jogador)
+        jogo[mv] = ' '
         if score > best_score:
             best_score = score
             best_moves = [mv]
@@ -46,21 +46,21 @@ def best_move_minimax(board, ai_symbol, player_symbol):
     return random.choice(best_moves) if best_moves else None
 
 
-def ai_choose_move(board, difficulty, ai_symbol='O', player_symbol='X'):
+def jogada_ia(jogo, dificuldade, simbolo_ia='O', simbolo_jogador='X'):
     r = random.random()
-    if difficulty == 'Fácil':
-        return random.choice(available_moves(board))
-    elif difficulty == 'Médio':
+    if dificuldade == 'Fácil':
+        return random.choice(jogadas_livres(jogo))
+    elif dificuldade == 'Médio':
         if r < 0.5:
-            return best_move_minimax(board, ai_symbol, player_symbol)
+            return melhor_jogada_minimax(jogo, simbolo_ia  , simbolo_jogador)
         else:
-            return random.choice(available_moves(board))
-    elif difficulty == 'Difícil':
+            return random.choice(jogadas_livres(jogo))
+    elif dificuldade == 'Difícil':
         if r < 0.7:
-            return best_move_minimax(board, ai_symbol, player_symbol)
+            return melhor_jogada_minimax(jogo, simbolo_ia  , simbolo_jogador)
         else:
-            return random.choice(available_moves(board))
-    elif difficulty == 'Impossível':
-        return best_move_minimax(board, ai_symbol, player_symbol)
+            return random.choice(jogadas_livres(jogo))
+    elif dificuldade == 'Impossível':
+        return melhor_jogada_minimax(jogo, simbolo_ia  , simbolo_jogador)
     else:
-        return random.choice(available_moves(board))
+        return random.choice(jogadas_livres(jogo))
