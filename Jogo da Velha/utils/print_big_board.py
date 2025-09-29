@@ -54,10 +54,9 @@ def imprimir_tabuleiro(board, destaque=None, largura_celula=7, usar_bordas=True)
     if len(board) != 9:
         raise ValueError("tabuleiro deve ter 9 elementos")
 
-    largura_term = shutil.get_terminal_size().columns
     destaque_set = set(destaque) if destaque else set()
-
     cell_arts = []
+
     for idx, val in enumerate(board):
         v = (val or " ").strip()
         if v.upper() == "X":
@@ -100,6 +99,4 @@ def imprimir_tabuleiro(board, destaque=None, largura_celula=7, usar_bordas=True)
             else:
                 linhas.append(" " * (3 * largura_celula + 4))
 
-    for linha in linhas:
-        print(_center_with_ansi(linha, largura_term))
-    print()
+    return linhas

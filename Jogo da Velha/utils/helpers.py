@@ -101,15 +101,15 @@ ______          _           _
             .strip()
             .lower()
         )
-        if rodadas in "1234":
+        if rodadas == "1" or rodadas == "2" or rodadas == "3" or rodadas == "4":
             if rodadas == "1":
                 return rodadas
             elif rodadas == "2":
                 return 3
             elif rodadas == "3":
                 return 5
-            else:
-                return
+            elif rodadas == "4":
+                return 7
         elif rodadas == "q":
             return None
         else:
@@ -157,7 +157,7 @@ def input_jogador(sinal):
     while True:
 
         pos = input(
-            f"{amarelo}Jogador {sinal}, escolha uma posição (1 - 9), ou saia do jogo (Q): {reset}"
+            f"\n{amarelo}Jogador {sinal}, escolha uma posição (1 - 9), ou saia do jogo (Q): {reset}"
         )
         if pos in "123456789":
             return int(pos) - 1
@@ -269,5 +269,7 @@ def placar(modo, vitoria_x, vitoria_o, empate):
     co = criar_caixa(caixa_o, azul)
     ce = criar_caixa(caixa_empates, amarelo)
 
+    linhas = []
     for linha in zip(cx, co, ce):
-        print("   ".join(linha).center(largura + 23))
+        linhas.append("   ".join(linha).center(largura + 25))
+    return linhas
