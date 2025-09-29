@@ -13,14 +13,18 @@ preto = "\033[30m"
 
 _ansi_re = re.compile(r"\x1b\[[0-9;]*m")
 
+
 def limpar_tela():
-    os.system('cls' if os.name == 'nt' else 'clear')
+    os.system("cls" if os.name == "nt" else "clear")
+
 
 def _strip_ansi(s: str) -> str:
     return _ansi_re.sub("", s)
 
+
 def _visible_len(s: str) -> int:
     return len(_strip_ansi(s))
+
 
 def _center_with_ansi(s: str, width: int) -> str:
     vis = _visible_len(s)
@@ -29,23 +33,13 @@ def _center_with_ansi(s: str, width: int) -> str:
     pad = (width - vis) // 2
     return " " * pad + s
 
-x_arte = [
-    "\\   /",
-    " \\ / ",
-    "  X  ",
-    " / \\ ",
-    "/   \\"
-]
 
-o_arte = [
-    " ___ ",
-    "/   \\",
-    "|   |",
-    "\\   /",
-    " --- "
-]
+x_arte = ["\\   /", " \\ / ", "  X  ", " / \\ ", "/   \\"]
 
-def celula_vazia(num, largura_celula=5):
+o_arte = [" ___ ", "/   \\", "|   |", "\\   /", " --- "]
+
+
+def celula_vazia(num, largura_celula=8):
     label = str(num)
     return [
         " " * largura_celula,
@@ -55,7 +49,8 @@ def celula_vazia(num, largura_celula=5):
         " " * largura_celula,
     ]
 
-def imprimir_tabuleiro(board, destaque=None, centralizar_vertical=False, largura_celula=5, usar_bordas=True):
+
+def imprimir_tabuleiro(board, destaque=None, largura_celula=7, usar_bordas=True):
     if len(board) != 9:
         raise ValueError("tabuleiro deve ter 9 elementos")
 
@@ -66,19 +61,15 @@ def imprimir_tabuleiro(board, destaque=None, centralizar_vertical=False, largura
     for idx, val in enumerate(board):
         v = (val or " ").strip()
         if v.upper() == "X":
-            art = x_arte.copy()
+            art = [line.center(largura_celula) for line in x_arte]
         elif v.upper() == "O":
-            art = o_arte.copy()
+            art = [line.center(largura_celula) for line in o_arte]
         else:
             art = celula_vazia(idx + 1, largura_celula)
 
         normed = []
         for line in art:
-            visible = _strip_ansi(line)
-            if len(visible) < largura_celula:
-                visible = visible.ljust(largura_celula)
-            elif len(visible) > largura_celula:
-                visible = visible[:largura_celula]
+            visible = _strip_ansi(line).ljust(largura_celula)
             if idx in destaque_set:
                 normed.append(f"{fundo_amarelo}{preto}{visible}{reset}")
             else:
@@ -109,28 +100,6 @@ def imprimir_tabuleiro(board, destaque=None, centralizar_vertical=False, largura
             else:
                 linhas.append(" " * (3 * largura_celula + 4))
 
-    max_vis = max(_visible_len(r) for r in linhas) if linhas else 0
-    if largura_term < max_vis + 2:
-        _imprimir_compacto(board, destaque_set)
-        return
-
     for linha in linhas:
         print(_center_with_ansi(linha, largura_term))
     print()
-
-def _imprimir_compacto(board, destaque_set):
-    cells = []
-    for i, v in enumerate(board):
-        if v.strip():
-            txt = v.strip()
-        else:
-            txt = str(i + 1)
-        if i in destaque_set:
-            cells.append(f"{fundo_amarelo}{preto}{txt}{reset}")
-        else:
-            cells.append(txt)
-    print(f" {cells[0]} | {cells[1]} | {cells[2]} ")
-    print("---+---+---")
-    print(f" {cells[3]} | {cells[4]} | {cells[5]} ")
-    print("---+---+---")
-    print(f" {cells[6]} | {cells[7]} | {cells[8]} ")

@@ -1,39 +1,75 @@
 from .logica import jogadas_livres, empate, checar_vencedor
 from .ia import jogada_ia
-from utils.helpers import input_jogador, escolher_rounds, clear_screen
+from utils.helpers import (
+    input_jogador,
+    escolher_rounds,
+    clear_screen,
+    vitoria_o,
+    vitoria_x,
+    tela_empate,
+    placar,
+    imprimir_centralizado_vertical
+)
 from shutil import get_terminal_size
 from utils.print_big_board import imprimir_tabuleiro
 import time
 
-reset   = "\033[0m"
-negrito  = "\033[1m"
+reset = "\033[0m"
+negrito = "\033[1m"
 vermelho = "\033[31m"
-verde    = "\033[32m"
-amarelo  = "\033[33m"
-azul     = "\033[34m"
-magenta  = "\033[35m"
-ciano    = "\033[36m"
-branco   = "\033[37m"
+verde = "\033[32m"
+amarelo = "\033[33m"
+azul = "\033[34m"
+magenta = "\033[35m"
+ciano = "\033[36m"
+branco = "\033[37m"
 largura = get_terminal_size().columns
 
-def rodada_unica(modo, dificuldade=None, jogador_inicial="X", rodada_atual = 1, rodadas_totais = 1):
+
+def rodada_unica(
+    modo,
+    dificuldade=None,
+    jogador_inicial="X",
+    rodada_atual=1,
+    rodadas_totais=1,
+    vitorias_x=0,
+    vitorias_o=0,
+    empates=0,
+):
     jogo = [" "] * 9
     jogador = jogador_inicial
-    imprimir_tabuleiro(jogo, destaque=None, centralizar_vertical=True)
+    imprimir_tabuleiro(jogo, destaque=None)
+    placar(modo,vitorias_x, vitorias_o, empates)
+
 
     while True:
         ganhador, highlight = checar_vencedor(jogo)
         if ganhador:
+            
             clear_screen()
-            print(f"\n--- Rodada {rodada_atual} de {rodadas_totais} ---")
-            imprimir_tabuleiro(jogo, destaque=None, centralizar_vertical=True)
+            print(
+                "\n"
+                + f"--------------- Rodada {rodada_atual} de {rodadas_totais} ---------------".center(
+                    largura
+                )
+                + "\n"
+            )
+            imprimir_tabuleiro(jogo, destaque=None)
+            placar(modo,vitorias_x, vitorias_o, empates)
             print(f"Vencedor da rodada: {ganhador}")
             time.sleep(5)
             return ganhador
         if empate(jogo):
             clear_screen()
-            print(f"\n--- Rodada {rodada_atual} de {rodadas_totais} ---")
-            imprimir_tabuleiro(jogo, destaque=None, centralizar_vertical=True)
+            print(
+                "\n"
+                + f"--------------- Rodada {rodada_atual} de {rodadas_totais} ---------------".center(
+                    largura
+                )
+                + "\n"
+            )
+            imprimir_tabuleiro(jogo, destaque=None)
+            placar(modo,vitorias_x, vitorias_o, empates)
             print("Rodada terminou em empate.")
             time.sleep(5)
             return "Empate"
@@ -47,8 +83,15 @@ def rodada_unica(modo, dificuldade=None, jogador_inicial="X", rodada_atual = 1, 
                 continue
             jogo[mv] = jogador
             clear_screen()
-            print(f"\n--- Rodada {rodada_atual} de {rodadas_totais} ---")
-            imprimir_tabuleiro(jogo, destaque=None, centralizar_vertical=True)
+            print(
+                "\n"
+                + f"--------------- Rodada {rodada_atual} de {rodadas_totais} ---------------".center(
+                    largura
+                )
+                + "\n"
+            )
+            imprimir_tabuleiro(jogo, destaque=None)
+            placar(modo,vitorias_x, vitorias_o, empates)
             jogador = "O" if jogador == "X" else "X"
 
         else:
@@ -61,8 +104,16 @@ def rodada_unica(modo, dificuldade=None, jogador_inicial="X", rodada_atual = 1, 
                     continue
                 jogo[mv] = "X"
                 clear_screen()
-                print(f"\n--- Rodada {rodada_atual} de {rodadas_totais} ---")
-                imprimir_tabuleiro(jogo, destaque=None, centralizar_vertical=True)
+                print(
+                    "\n"
+                    + f"--------------- Rodada {rodada_atual} de {rodadas_totais} ---------------".center(
+                        largura
+                    )
+                    + "\n"
+                )
+                imprimir_tabuleiro(jogo, destaque=None)
+                placar(modo,vitorias_x, vitorias_o, empates)
+
                 jogador = "O"
             else:
                 print("Máquina jogando...")
@@ -76,8 +127,15 @@ def rodada_unica(modo, dificuldade=None, jogador_inicial="X", rodada_atual = 1, 
                     mv = random.choice(moves)
                 jogo[mv] = "O"
                 clear_screen()
-                print(f"\n--- Rodada {rodada_atual} de {rodadas_totais} ---")
-                imprimir_tabuleiro(jogo, destaque=None, centralizar_vertical=True)
+                print(
+                    "\n"
+                    + f"--------------- Rodada {rodada_atual} de {rodadas_totais} ---------------".center(
+                        largura
+                    )
+                    + "\n"
+                )
+                imprimir_tabuleiro(jogo, destaque=None)
+                placar(modo,vitorias_x, vitorias_o, empates)
                 jogador = "X"
 
 
@@ -89,10 +147,23 @@ def serie_de_rodadas(modo, dificuldade=None):
     rodadas_necessarias = int(rodadas) // 2 + 1
     current_start = "X"
 
-    for r in range(1, rodadas + 1):
+    for r in range(1, int(rodadas) + 1):
         clear_screen()
-        print(f"\n--- Rodada {r} de {rodadas} ---")
-        result = rodada_unica(modo, dificuldade, jogador_inicial=current_start, rodada_atual = r, rodadas_totais = rodadas)
+        print(
+            "\n"
+            + f"--------------- Rodada {r} de {rodadas} ---------------".center(largura)
+            + "\n"
+        )
+        result = rodada_unica(
+            modo,
+            dificuldade,
+            jogador_inicial=current_start,
+            rodada_atual=r,
+            rodadas_totais=int(rodadas),
+            vitorias_x=vitorias["X"],
+            vitorias_o=vitorias["O"],
+            empates=vitorias["Empate"],
+        )
 
         if result == "Quit":
             print("Jogo interrompido pelo usuario. Voltando ao menu...")
@@ -106,27 +177,26 @@ def serie_de_rodadas(modo, dificuldade=None):
         elif result == "Empate":
             vitorias["Empate"] += 1
 
-        print(
-            f"Placar atual: Jogador (X) = {vitorias['X']}  Maquina (O) = {vitorias['O']}  Empates = {vitorias['Empate']}"
-        )
-
         if vitorias["X"] >= rodadas_necessarias or vitorias["O"] >= rodadas_necessarias:
             break
 
         current_start = "O" if current_start == "X" else "X"
 
     if vitorias["X"] > vitorias["O"]:
-        print(
-            f"\n=== Serie encerrada: Vencedor: X ({vitorias['X']} x {vitorias['O']}) ==="
-        )
-        time.sleep(2)
+        escolha = vitoria_x()
+        if escolha == "menu":
+            return None
+        else:
+            exit(0)
     elif vitorias["O"] > vitorias["X"]:
-        print(
-            f"\n=== Serie encerrada: Vencedor: O ({vitorias['O']} x {vitorias['X']}) ==="
-        )
-        time.sleep(2)
+        escolha = vitoria_o()
+        if escolha == "menu":
+            return None
+        else:
+            exit(0)
     else:
-        print(
-            f"\n=== Serie encerrada: Empate na serie ({vitorias['X']} x {vitorias['O']}) ==="
-        )
-        time.sleep(2)
+        escolha = tela_empate()
+        if escolha == "menu":
+            return None
+        else:
+            exit(0)
